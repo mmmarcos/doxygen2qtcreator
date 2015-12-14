@@ -11,31 +11,31 @@ QHP_NAMESPACE      = "my_namespace"
 QCH_FILE           = "path/to/my_docs.qch"
 QHG_LOCATION       = "path/to/qhelpgenerator"
 ```
-When running Doxygen, this will generate an `index.qhp` file in your `html` directory and execute `qhelpgenerator` to compile it into Qt Help format (the `my_docs.qch` file). You can then import this file from Qt Creator / Tools / Options / Help / Documentation. Your docs will be available using F1.
+When running Doxygen, this will generate an `index.qhp` file in your `html` directory and execute `qhelpgenerator` to compile it into Qt Help format (the `my_docs.qch` file). You can then import this file into Qt Creator (Tools/Options/Help/Documentation) to have your docs available using F1.
 
-The problem is that you wont get descriptive tooltips if you hover over a class method or variable. Qt Creator won't show your class or method description insde tooltips.
+The problem is that you wont get your docs brief's inside Qt Creator tooltips if you hover over a class method or variable.
 
 ## What this script does
  
-The doxygen2qtcreator.py is a simple script that looks for documented classes in your Doxygen `html` directory and inserts special markers (in the form of html comment tags) used by Qt Creator to identify the begining and ending of a class/method brief documentation (among other things).
+Qt Creator uses special markers to retrieve class/method brief from html docs. The doxygen2qtcreator.py looks for documented classes in your Doxygen `html` directory and inserts these markers (html comment tags) at the begining and ending of a class/method brief documentation.
 
-This will allow you to integrate your classes and method brief into Qt Creator tooltips.
+When compiling your docs, Qt Creator will find these markers and include your docs in the tooltips.
 
 ## How to use it
 
-After compiling your docs with Doxygen, you need to run the script specifying the path to the `html` directory : 
+After running Doxygen, you need to run the script specifying the path to the `html` directory : 
 ```
-python doxygen2qtcreator.py path/to/html
+python doxygen2qtcreator.py HTMLDIR
 ```
 
 You can then use Qt's qhelpgenerator tool to compile to Qt Help format :
 ```
-QTPATH/bin/qhelpgenerator index.qhp -o my_docs.qch
+QTDIR/bin/qhelpgenerator HTMLDIR/index.qhp -o my_docs.qch
 ```
 
 And finally you can import `my_docs.qch` into Qt Creator. 
 
-NOTE: You should notice that you may disable the tags QCH_FILE and QHG_LOCATION in your Doxyfile since you will be generating the QCH file yourself.
+*Notice that you may disable the tags `QCH_FILE` and `QHG_LOCATION` in your Doxyfile since you will be generating the QCH file yourself*.
 
 ## Usage
 
