@@ -1,16 +1,46 @@
 # doxygen2qtcreator
 
-Integrate Doxygen-generated html docs into Qt Creator tooltips.
+Integrate Doxygen-generated html documentation into Qt Creator tooltips.
 
-The doxygen2qtcreator.py scripts scans for documented classes inside Doxygen 'html' directory and it 
-inserts markers used by Qt Creator to generate the tooltip when hovering over a class or method name.
+## Context
 
-It uses BeautifulSoup4 to parse and modify the html files.
+If you use Qt Creator IDE and Doxygen, you can include the documentation of your API into Qt Creator. You need to set the following tags in your Doxyfile : 
+```
+GENERATE_QHP       = YES
+QHP_NAMESPACE      = "my_namespace"
+QCH_FILE           = "path/to/my_docs.qch"
+QHG_LOCATION       = "path/to/qhelpgenerator"
+```
+When running Doxygen, this will generate an `index.qhp` file in your `html` directory and execute `qhelpgenerator` to compile it into Qt Help format (the `my_docs.qch` file). You can then import this file from Qt Creator / Tools / Options / Help / Documentation. Your docs will be available using F1.
+
+The problem is that you wont get descriptive tooltips if you hover over a class method or variable. Qt Creator won't show your class or method description insde tooltips.
+
+## What this script does
+ 
+The doxygen2qtcreator.py is a simple script that looks for documented classes in your Doxygen `html` directory and inserts special markers (in the form of html comment tags) used by Qt Creator to identify the begining and ending of a class/method brief documentation (among other things).
+
+This will allow you to integrate your classes and method brief into Qt Creator tooltips.
+
+## How to use it
+
+After compiling your docs with Doxygen, you need to run the script specifying the path to the `html` directory : 
+```
+python doxygen2qtcreator.py path/to/html
+```
+
+You can then use Qt's qhelpgenerator tool to compile to Qt Help format :
+```
+QTPATH/bin/qhelpgenerator index.qhp -o my_docs.qch
+```
+
+And finally you can import `my_docs.qch` into Qt Creator. 
+
+NOTE: You should notice that you may disable the tags QCH_FILE and QHG_LOCATION in your Doxyfile since you will be generating the QCH file yourself.
 
 ## Usage
 
 ```
-python doxy2qtcreator.py [-h] [-o OUTDIR] [-f FILE] [-q] [htmldir]
+python doxygen2qtcreator.py [-h] [-o OUTDIR] [-f FILE] [-q] [htmldir]
 
 positional arguments:
   htmldir               Doxygen html directory (defaults to current directory)
@@ -26,10 +56,8 @@ optional arguments:
 
 ## Disclaimer
 
-The script is rather simple and it currently handles Doxygen default html layout. However it should work if you only change the html layout (i.e. header or footer) but not the documentation structure (methods tables and divs).
+The script serves it purpose but it is not ~~heavily~~ tested. I've only tested it with Doxygen's default html layout. 
 
-You should use the `-o OUTDIR` to write the modified html files into another directory (specially if your documentation takes long time to re-generate).
-
-```python doxy2qtcreator.py path_to_htmldir/ -o out/```
+Feel free to contact me if you have ideas on how to improve it.
 
 Tested with Doxygen 1.8.10 and Qt Creator 3.5.0.

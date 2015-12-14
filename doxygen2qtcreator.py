@@ -106,7 +106,7 @@ def is_class_file(filename):
 def main(htmldir, outdir, filenames, quiet):
     # if no filename was specified loop over files in htmldir
     if not filenames:
-        if not quiet: print("Looking for Doxygen-generated html class files in:\n %s" % htmldir )
+        if not quiet: print("Looking for html class files in:\n %s" % htmldir )
         filenames = [f for f in os.listdir(htmldir) if is_class_file(f)]
     
     for filename in filenames:
